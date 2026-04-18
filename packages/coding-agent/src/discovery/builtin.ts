@@ -4,7 +4,7 @@
  * Primary provider for OMP native configs. Supports all capabilities.
  */
 import * as path from "node:path";
-import { logger, parseFrontmatter, tryParseJson } from "@oh-my-pi/pi-utils";
+import { getConfigDirName, logger, parseFrontmatter, tryParseJson } from "@oh-my-pi/pi-utils";
 import { registerProvider } from "../capability";
 import { type ContextFile, contextFileCapability } from "../capability/context-file";
 import { type Extension, type ExtensionManifest, extensionCapability } from "../capability/extension";
@@ -34,8 +34,8 @@ import {
 } from "./helpers";
 
 const PROVIDER_ID = "native";
-const DISPLAY_NAME = "OMP";
-const DESCRIPTION = "Native OMP configuration from ~/.omp and .omp/";
+const DISPLAY_NAME = "OMG-Pi";
+const DESCRIPTION = `Native OMG-Pi configuration from ~/${getConfigDirName()} and .omp/`;
 const PRIORITY = 100;
 
 const PATHS = SOURCE_PATHS.native;

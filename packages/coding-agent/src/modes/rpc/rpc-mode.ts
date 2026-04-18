@@ -15,7 +15,9 @@ import type {
 	ExtensionUIContext,
 	ExtensionUIDialogOptions,
 	ExtensionWidgetOptions,
+	RegisteredCommand,
 } from "../../extensibility/extensions";
+import { BUILTIN_SLASH_COMMANDS, loadSlashCommands } from "../../extensibility/slash-commands";
 import { type Theme, theme } from "../../modes/theme/theme";
 import type { AgentSession } from "../../session/agent-session";
 import { isRpcHostToolResult, isRpcHostToolUpdate, RpcHostToolBridge } from "./host-tools";
@@ -169,6 +171,130 @@ export async function runRpcMode(session: AgentSession): Promise<never> {
 
 	// Shutdown request flag (wrapped in object to allow mutation with const)
 	const shutdownState = { requested: false };
+	let planModePreviousTools: string[] | undefined;
+
+	const getSessionState = (): RpcSessionState => ({
+		model: session.model,
+		thinkingLevel: session.thinkingLevel,
+		isStreaming: session.isStreaming,
+		isCompacting: session.isCompacting,
+		steeringMode: session.steeringMode,
+		followUpMode: session.followUpMode,
+		interruptMode: session.interruptMode,
+		sessionFile: session.sessionFile,
+		sessionId: session.sessionId,
+		sessionName: session.sessionName,
+		autoCompactionEnabled: session.autoCompactionEnabled,
+		messageCount: session.messages.length,
+		queuedMessageCount: session.queuedMessageCount,
+		todoPhases: session.getTodoPhases(),
+		planMode: session.getPlanModeState(),
+		pendingActions: session.getPendingActions(),
+		activePendingActionId: session.getPendingActions()[0]?.id,
+		systemPrompt: session.systemPrompt,
+		dumpTools: session.agent.state.tools.map(tool => ({
+			name: tool.name,
+			description: tool.description,
+			parameters: tool.parameters,
+		})),
+	});
+
+	const setPlanMode = async (enabled: boolean): Promise<RpcSessionState> => {
+		const currentPlanMode = session.getPlanModeState();
+		if (enabled) {
+			if (!currentPlanMode?.enabled) {
+				const previousTools = session.getActiveToolNames();
+				const hasExitTool = session.getToolByName("exit_plan_mode") !== undefined;
+				planModePreviousTools = previousTools;
+				if (hasExitTool) {
+					await session.setActiveToolsByName([...new Set([...previousTools, "exit_plan_mode"])]);
+				}
+				session.setPlanModeState({ enabled: true, planFilePath: "local://PLAN.md", workflow: "parallel" });
+				if (session.isStreaming) {
+					await session.sendPlanModeContext({ deliverAs: "steer" });
+				}
+			}
+			return getSessionState();
+		}
+		if (currentPlanMode?.enabled) {
+			if (planModePreviousTools) {
+				await session.setActiveToolsByName(planModePreviousTools);
+			}
+			session.setPlanModeState(undefined);
+			planModePreviousTools = undefined;
+		}
+		return getSessionState();
+	};
+
+	const getSlashCommands = async () => {
+		const commands: Array<{
+			name: string;
+			description: string;
+			kind: "builtin" | "extension" | "custom" | "skill" | "prompt";
+			source: string;
+		}> = [];
+		const seenNames = new Set<string>();
+		const appendCommand = (command: (typeof commands)[number]): void => {
+			if (seenNames.has(command.name)) {
+				return;
+			}
+			seenNames.add(command.name);
+			commands.push(command);
+		};
+		const builtinCommandNames = new Set(BUILTIN_SLASH_COMMANDS.map(command => command.name));
+		const extensionCommands: RegisteredCommand[] =
+			session.extensionRunner?.getRegisteredCommands(builtinCommandNames) ?? [];
+		const fileCommands = await loadSlashCommands({ cwd: session.sessionManager.getCwd() });
+
+		for (const command of BUILTIN_SLASH_COMMANDS) {
+			appendCommand({
+				name: command.name,
+				description: command.description,
+				kind: "builtin",
+				source: "Built in",
+			});
+		}
+
+		for (const command of extensionCommands) {
+			appendCommand({
+				name: command.name,
+				description: command.description ?? "(extension command)",
+				kind: "extension",
+				source: "Extension",
+			});
+		}
+
+		for (const command of session.customCommands) {
+			appendCommand({
+				name: command.command.name,
+				description: `${command.command.description} (${command.source})`,
+				kind: "custom",
+				source: `Custom (${command.source})`,
+			});
+		}
+
+		if (session.settings.get("skills.enableSkillCommands")) {
+			for (const skill of session.skills) {
+				appendCommand({
+					name: `skill:${skill.name}`,
+					description: skill.description,
+					kind: "skill",
+					source: skill.source,
+				});
+			}
+		}
+
+		for (const command of fileCommands) {
+			appendCommand({
+				name: command.name,
+				description: command.description,
+				kind: "prompt",
+				source: command.source,
+			});
+		}
+
+		return commands;
+	};
 
 	/**
 	 * Extension UI context that uses the RPC protocol.
@@ -573,32 +699,7 @@ export async function runRpcMode(session: AgentSession): Promise<never> {
 			// =================================================================
 
 			case "get_state": {
-				const state: RpcSessionState = {
-					model: session.model,
-					thinkingLevel: session.thinkingLevel,
-					isStreaming: session.isStreaming,
-					isCompacting: session.isCompacting,
-					steeringMode: session.steeringMode,
-					followUpMode: session.followUpMode,
-					interruptMode: session.interruptMode,
-					sessionFile: session.sessionFile,
-					sessionId: session.sessionId,
-					sessionName: session.sessionName,
-					autoCompactionEnabled: session.autoCompactionEnabled,
-					messageCount: session.messages.length,
-					queuedMessageCount: session.queuedMessageCount,
-					todoPhases: session.getTodoPhases(),
-					planMode: session.getPlanModeState(),
-					pendingActions: session.getPendingActions(),
-					activePendingActionId: session.getPendingActions()[0]?.id,
-					systemPrompt: session.systemPrompt,
-					dumpTools: session.agent.state.tools.map(tool => ({
-						name: tool.name,
-						description: tool.description,
-						parameters: tool.parameters,
-					})),
-				};
-				return success(id, "get_state", state);
+				return success(id, "get_state", getSessionState());
 			}
 
 			case "set_todos": {
@@ -611,6 +712,14 @@ export async function runRpcMode(session: AgentSession): Promise<never> {
 				const rpcTools = hostToolBridge.setTools(tools);
 				await session.refreshRpcHostTools(rpcTools);
 				return success(id, "set_host_tools", { toolNames: tools.map(tool => tool.name) });
+			}
+
+			case "set_plan_mode": {
+				return success(id, "set_plan_mode", await setPlanMode(command.enabled));
+			}
+
+			case "get_slash_commands": {
+				return success(id, "get_slash_commands", { commands: await getSlashCommands() });
 			}
 
 			// =================================================================

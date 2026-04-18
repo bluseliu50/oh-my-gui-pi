@@ -5,6 +5,7 @@ import {
 	CONFIG_DIR_NAME,
 	getAgentDir,
 	getConfigAgentDirName,
+	getConfigDirName,
 	getProjectDir,
 	isEnoent,
 	logger,
@@ -16,10 +17,10 @@ import { JSONC, YAML } from "bun";
 import { expandTilde } from "./tools/path-utils";
 
 const priorityList = [
-	{ dir: CONFIG_DIR_NAME, globalAgentDir: getConfigAgentDirName },
-	{ dir: ".claude" },
-	{ dir: ".codex" },
-	{ dir: ".gemini" },
+	{ userDir: getConfigDirName, projectDir: CONFIG_DIR_NAME, globalAgentDir: getConfigAgentDirName },
+	{ userDir: ".claude", projectDir: ".claude" },
+	{ userDir: ".codex", projectDir: ".codex" },
+	{ userDir: ".gemini", projectDir: ".gemini" },
 ];
 
 // =============================================================================
@@ -54,7 +55,7 @@ export function getChangelogPath(): string {
 }
 
 // =============================================================================
-// User Config Paths (~/.omp/agent/*)
+// User Config Paths (~/.omg-pi/agent/*)
 // =============================================================================
 
 function migrateJsonToYml(jsonPath: string, ymlPath: string) {
@@ -254,27 +255,30 @@ export class ConfigFile<T> implements IConfigFile<T> {
 
 /**
  * Config directory bases in priority order (highest first).
- * User-level: ~/.omp/agent, ~/.claude, ~/.codex, ~/.gemini
+ * User-level: ~/.omg-pi/agent, ~/.claude, ~/.codex, ~/.gemini
  * Project-level: .omp, .claude, .codex, .gemini
  */
-const USER_CONFIG_BASES = priorityList.map(({ dir, globalAgentDir }) => ({
-	base: () => path.join(os.homedir(), globalAgentDir ? globalAgentDir() : dir),
-	name: dir,
-}));
+const USER_CONFIG_BASES = priorityList.map(({ userDir, globalAgentDir }) => {
+	const resolveUserDir = () => (typeof userDir === "function" ? userDir() : userDir);
+	return {
+		base: () => path.join(os.homedir(), globalAgentDir ? globalAgentDir() : resolveUserDir()),
+		name: resolveUserDir,
+	};
+});
 
-const PROJECT_CONFIG_BASES = priorityList.map(({ dir }) => ({
-	base: dir,
-	name: dir,
+const PROJECT_CONFIG_BASES = priorityList.map(({ projectDir }) => ({
+	base: projectDir,
+	name: projectDir,
 }));
 
 export interface ConfigDirEntry {
 	path: string;
-	source: string; // e.g., ".omp", ".claude"
+	source: string; // e.g., ".omg-pi", ".claude"
 	level: "user" | "project";
 }
 
 export interface GetConfigDirsOptions {
-	/** Include user-level directories (~/.omp/agent/...). Default: true */
+	/** Include user-level directories (~/.omg-pi/agent/...). Default: true */
 	user?: boolean;
 	/** Include project-level directories (.omp/...). Default: true */
 	project?: boolean;
@@ -294,7 +298,7 @@ export interface GetConfigDirsOptions {
  * @example
  * // Get all command directories
  * getConfigDirs("commands")
- * // → [{ path: "~/.omp/agent/commands", source: ".omp", level: "user" }, ...]
+ * // → [{ path: "~/.omg-pi/agent/commands", source: ".omg-pi", level: "user" }, ...]
  *
  * @example
  * // Get only existing project skill directories
@@ -309,7 +313,7 @@ export function getConfigDirs(subpath: string, options: GetConfigDirsOptions = {
 		for (const { base, name } of USER_CONFIG_BASES) {
 			const resolvedPath = path.resolve(base(), subpath);
 			if (!existingOnly || fs.existsSync(resolvedPath)) {
-				results.push({ path: resolvedPath, source: name, level: "user" });
+				results.push({ path: resolvedPath, source: name(), level: "user" });
 			}
 		}
 	}

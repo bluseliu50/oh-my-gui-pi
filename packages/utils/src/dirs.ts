@@ -1,14 +1,14 @@
 /**
- * Centralized path helpers for omp config directories.
+ * Centralized path helpers for coding-agent config directories.
  *
- * Uses PI_CONFIG_DIR (default ".omp") for the config root and
+ * Uses PI_CONFIG_DIR (default ".omg-pi") for the user-level config root and
  * PI_CODING_AGENT_DIR to override the agent directory.
  *
  * On Linux, if XDG_DATA_HOME / XDG_STATE_HOME / XDG_CACHE_HOME environment
  * variables are set, paths are redirected to XDG-compliant locations under
- * $XDG_*_HOME/omp/. This requires running `omp config migrate` first to
+ * $XDG_*_HOME/omg-pi/. This requires running `omp config migrate` first to
  * move data to the new locations. No filesystem existence checks are performed
- * — if the env var is set, omp trusts that the migration has been done.
+ * — if the env var is set, the app trusts that the migration has been done.
  */
 
 import * as fs from "node:fs";
@@ -16,10 +16,16 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { engines, version } from "../package.json" with { type: "json" };
 
-/** App name (e.g. "omp") */
+/** CLI/binary name (e.g. "omp") */
 export const APP_NAME: string = "omp";
 
-/** Config directory name (e.g. ".omp") */
+/** Default user-level config directory name (e.g. ".omg-pi") */
+export const USER_CONFIG_DIR_NAME: string = ".omg-pi";
+
+/** User-level app data directory name for XDG locations (e.g. "omg-pi") */
+export const USER_APP_DIR_NAME: string = "omg-pi";
+
+/** Project-local config directory name (e.g. ".omp") */
 export const CONFIG_DIR_NAME: string = ".omp";
 
 /** Version (e.g. "1.0.0") */
@@ -89,12 +95,12 @@ export function setProjectDir(dir: string): void {
 	process.chdir(projectDir);
 }
 
-/** Get the config directory name relative to home (e.g. ".omp" or PI_CONFIG_DIR override). */
+/** Get the user-level config directory name relative to home (e.g. ".omg-pi" or PI_CONFIG_DIR override). */
 export function getConfigDirName(): string {
-	return process.env.PI_CONFIG_DIR || CONFIG_DIR_NAME;
+	return process.env.PI_CONFIG_DIR || USER_CONFIG_DIR_NAME;
 }
 
-/** Get the config agent directory name relative to home (e.g. ".omp/agent" or PI_CONFIG_DIR + "/agent"). */
+/** Get the config agent directory name relative to home (e.g. ".omg-pi/agent" or PI_CONFIG_DIR + "/agent"). */
 export function getConfigAgentDirName(): string {
 	return `${getConfigDirName()}/agent`;
 }
@@ -106,17 +112,17 @@ export function getConfigAgentDirName(): string {
 type XdgCategory = "data" | "state" | "cache";
 
 /**
- * Resolves and caches all omp directory paths. On Linux, when XDG environment
- * variables are set, paths are redirected under $XDG_*_HOME/omp/. A new
- * instance is created whenever the agent directory changes, which naturally
- * invalidates all cached paths.
+ * Resolves and caches all coding-agent config directory paths. On Linux, when
+ * XDG environment variables are set, paths are redirected under
+ * $XDG_*_HOME/omg-pi/. A new instance is created whenever the agent directory
+ * changes, which naturally invalidates all cached paths.
  */
 class DirResolver {
 	readonly configRoot: string;
 	readonly agentDir: string;
 
 	// Per-category base dirs. Without XDG, all three equal configRoot / agentDir.
-	// With XDG on Linux, they point to $XDG_*_HOME/omp/.
+	// With XDG on Linux, they point to $XDG_*_HOME/omg-pi/.
 	readonly #rootDirs: Record<XdgCategory, string>;
 	readonly #agentDirs: Record<XdgCategory, string>;
 
@@ -124,23 +130,28 @@ class DirResolver {
 	readonly #agentCache = new Map<string, string>();
 
 	constructor(agentDirOverride?: string) {
-		this.configRoot = path.join(os.homedir(), getConfigDirName());
+		const configDirName = getConfigDirName();
+		this.configRoot = path.join(os.homedir(), configDirName);
 
 		const defaultAgent = path.join(this.configRoot, "agent");
 		this.agentDir = agentDirOverride ? path.resolve(agentDirOverride) : defaultAgent;
 		const isDefault = this.agentDir === defaultAgent;
+		const useXdg =
+			(process.platform === "linux" || process.platform === "darwin") &&
+			isDefault &&
+			configDirName === USER_CONFIG_DIR_NAME;
 
 		// XDG is a Linux convention. On other platforms, or for non-default
 		// profiles, all categories resolve to the legacy paths.
 		let xdgData: string | undefined;
 		let xdgState: string | undefined;
 		let xdgCache: string | undefined;
-		if ((process.platform === "linux" || process.platform === "darwin") && isDefault) {
+		if (useXdg) {
 			const resolveIf = (envVar: string) => {
 				const value = process.env[envVar];
 				if (value) {
 					try {
-						const joined = path.join(value, APP_NAME);
+						const joined = path.join(value, USER_APP_DIR_NAME);
 						if (fs.existsSync(joined)) {
 							return joined;
 						}
@@ -158,7 +169,7 @@ class DirResolver {
 			state: xdgState ?? this.configRoot,
 			cache: xdgCache ?? this.configRoot,
 		};
-		// XDG flattens the agent/ prefix: ~/.omp/agent/sessions → $XDG_DATA_HOME/omp/sessions
+		// XDG flattens the agent/ prefix: ~/.omg-pi/agent/sessions → $XDG_DATA_HOME/omg-pi/sessions
 		this.#agentDirs = {
 			data: xdgData ?? this.agentDir,
 			state: xdgState ?? this.agentDir,
@@ -196,7 +207,7 @@ let dirs = new DirResolver(process.env.PI_CODING_AGENT_DIR);
 // Root directories
 // =============================================================================
 
-/** Get the config root directory (~/.omp). */
+/** Get the config root directory (~/.omg-pi by default). */
 export function getConfigRootDir(): string {
 	return dirs.configRoot;
 }
@@ -207,7 +218,7 @@ export function setAgentDir(dir: string): void {
 	process.env.PI_CODING_AGENT_DIR = dir;
 }
 
-/** Get the agent config directory (~/.omp/agent). */
+/** Get the agent config directory (~/.omg-pi/agent by default). */
 export function getAgentDir(): string {
 	return dirs.agentDir;
 }
@@ -218,7 +229,7 @@ export function getProjectAgentDir(cwd: string = getProjectDir()): string {
 }
 
 // =============================================================================
-// Config-root subdirectories (~/.omp/*)
+// Config-root subdirectories (~/.omg-pi/* by default)
 // =============================================================================
 
 /** Get the reports directory (~/.omp/reports). */

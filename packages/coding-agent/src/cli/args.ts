@@ -2,7 +2,7 @@
  * CLI argument parsing and help display
  */
 import { type Effort, THINKING_EFFORTS } from "@oh-my-pi/pi-ai";
-import { APP_NAME, CONFIG_DIR_NAME, logger } from "@oh-my-pi/pi-utils";
+import { APP_NAME, getConfigDirName, logger } from "@oh-my-pi/pi-utils";
 import chalk from "chalk";
 import { parseEffort } from "../thinking";
 import { BUILTIN_TOOLS } from "../tools";
@@ -239,7 +239,7 @@ export function getExtraHelpText(): string {
   ANTHROPIC_SEARCH_API_KEY   - Anthropic search provider
 
   ${chalk.dim("# Configuration")}
-  PI_CODING_AGENT_DIR        - Session storage directory (default: ~/${CONFIG_DIR_NAME}/agent)
+  PI_CODING_AGENT_DIR        - Session storage directory (default: ~/${getConfigDirName()}/agent)
   PI_PACKAGE_DIR             - Override package directory (for Nix/Guix store paths)
   PI_SMOL_MODEL              - Override smol/fast model (see --smol)
   PI_SLOW_MODEL              - Override slow/reasoning model (see --slow)
@@ -269,7 +269,7 @@ ${chalk.bold("Plugin Options:")}
   --plugin-dir <path>        Load plugin from directory (repeatable)
 
 ${chalk.bold("Useful Commands:")}
-  omp agents unpack           - Export bundled subagents to ~/.omp/agent/agents (default)
+  omp agents unpack           - Export bundled subagents to ~/${getConfigDirName()}/agent/agents (default)
   omp agents unpack --project - Export bundled subagents to ./.omp/agents`;
 }
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import * as readline from "node:readline";
+import { getAgentDbPath } from "@oh-my-pi/pi-utils";
 import { AuthCredentialStore } from "./auth-storage";
 import { getOAuthProviders } from "./utils/oauth";
 import { loginAnthropic } from "./utils/oauth/anthropic";
@@ -76,6 +77,8 @@ async function login(provider: OAuthProvider): Promise<void> {
 
 	const promptFn = (msg: string) => prompt(rl, `${msg} `);
 	const storage = await AuthCredentialStore.open();
+
+	const authDbPath = getAgentDbPath();
 
 	try {
 		let credentials: OAuthCredentials;
@@ -174,7 +177,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 			case "tavily": {
@@ -190,7 +193,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 			case "parallel": {
@@ -206,7 +209,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 
@@ -234,7 +237,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 
@@ -251,7 +254,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 
@@ -268,7 +271,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 			case "minimax-code": {
@@ -284,7 +287,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 
@@ -301,7 +304,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 					},
 				});
 				storage.saveApiKey(provider, apiKey);
-				console.log(`\nAPI key saved to ~/.omp/agent/agent.db`);
+				console.log(`\nAPI key saved to ${authDbPath}`);
 				return;
 			}
 
@@ -311,7 +314,7 @@ async function login(provider: OAuthProvider): Promise<void> {
 
 		storage.saveOAuth(provider, credentials);
 
-		console.log(`\nCredentials saved to ~/.omp/agent/agent.db`);
+		console.log(`\nCredentials saved to ${authDbPath}`);
 	} finally {
 		storage.close();
 		rl.close();

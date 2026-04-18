@@ -278,7 +278,9 @@ export class SSHCommandController {
 
 			// Show user-level hosts
 			if (userHosts.length > 0) {
-				lines.push(theme.fg("accent", "User level") + theme.fg("muted", ` (~/.omp/agent/ssh.json):`));
+				lines.push(
+					theme.fg("accent", "User level") + theme.fg("muted", ` (${shortenPath(getSSHConfigPath("user"))}):`),
+				);
 				for (const name of userHosts) {
 					const config = userConfig.hosts![name];
 					const details = this.#formatHostDetails(config);

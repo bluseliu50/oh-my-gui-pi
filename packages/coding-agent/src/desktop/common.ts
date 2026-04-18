@@ -32,14 +32,24 @@ export type DesktopBackendFrame =
 	| RpcResponse
 	| Record<string, unknown>;
 
+export interface DesktopSlashCommand {
+	name: string;
+	description: string;
+	kind: "builtin" | "extension" | "custom" | "skill" | "prompt";
+	source: string;
+}
+
 export interface DesktopBootstrap {
 	backendStatus: DesktopBackendStatus;
 	state: RpcSessionState;
 	messages: AgentMessage[];
+	slashCommands: DesktopSlashCommand[];
 }
 
 export type DesktopCommand = RpcCommand | RpcExtensionUIResponse;
-export type DesktopCommandResponse = RpcResponse | { type: "response"; command: "extension_ui_response"; success: true };
+export type DesktopCommandResponse =
+	| RpcResponse
+	| { type: "response"; command: "extension_ui_response"; success: true };
 
 export interface DesktopApi {
 	getBootstrap(): Promise<DesktopBootstrap>;

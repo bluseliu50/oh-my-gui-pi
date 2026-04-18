@@ -30,6 +30,8 @@ export type RpcCommand =
 	| { id?: string; type: "get_state" }
 	| { id?: string; type: "set_todos"; phases: TodoPhase[] }
 	| { id?: string; type: "set_host_tools"; tools: RpcHostToolDefinition[] }
+	| { id?: string; type: "set_plan_mode"; enabled: boolean }
+	| { id?: string; type: "get_slash_commands" }
 
 	// Model
 	| { id?: string; type: "set_model"; provider: string; modelId: string }
@@ -94,7 +96,6 @@ export interface RpcSessionState {
 	/** For session dump / export (plain-text parity with /dump). */
 	systemPrompt?: string;
 	dumpTools?: Array<{ name: string; description: string; parameters: unknown }>;
-
 }
 
 // ============================================================================
@@ -115,6 +116,21 @@ export type RpcResponse =
 	| { id?: string; type: "response"; command: "get_state"; success: true; data: RpcSessionState }
 	| { id?: string; type: "response"; command: "set_todos"; success: true; data: { todoPhases: TodoPhase[] } }
 	| { id?: string; type: "response"; command: "set_host_tools"; success: true; data: { toolNames: string[] } }
+	| { id?: string; type: "response"; command: "set_plan_mode"; success: true; data: RpcSessionState }
+	| {
+			id?: string;
+			type: "response";
+			command: "get_slash_commands";
+			success: true;
+			data: {
+				commands: Array<{
+					name: string;
+					description: string;
+					kind: "builtin" | "extension" | "custom" | "skill" | "prompt";
+					source: string;
+				}>;
+			};
+	  }
 
 	// Model
 	| {
