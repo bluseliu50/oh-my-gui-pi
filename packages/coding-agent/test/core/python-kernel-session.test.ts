@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/ipy/executor";
+import { disposeAllKernelSessions, executePython } from "oh-my-gui-pi/ipy/executor";
 import type {
 	KernelExecuteOptions,
 	KernelExecuteResult,
 	KernelShutdownResult,
-} from "@oh-my-pi/pi-coding-agent/ipy/kernel";
-import { PythonKernel } from "@oh-my-pi/pi-coding-agent/ipy/kernel";
+} from "oh-my-gui-pi/ipy/kernel";
+import { PythonKernel } from "oh-my-gui-pi/ipy/kernel";
 import { TempDir } from "@oh-my-pi/pi-utils";
 
 class FakeKernel {

@@ -3,9 +3,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { SessionManager } from "oh-my-gui-pi/session/session-manager";
+import type { ToolSession } from "oh-my-gui-pi/tools";
 import {
 	GhIssueViewTool,
 	GhPrCheckoutTool,
@@ -15,9 +15,9 @@ import {
 	GhRunWatchTool,
 	GhSearchIssuesTool,
 	GhSearchPrsTool,
-} from "@oh-my-pi/pi-coding-agent/tools/gh";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import * as git from "@oh-my-pi/pi-coding-agent/utils/git";
+} from "oh-my-gui-pi/tools/gh";
+import { wrapToolWithMetaNotice } from "oh-my-gui-pi/tools/output-meta";
+import * as git from "oh-my-gui-pi/utils/git";
 
 function createSession(
 	cwd: string = "/tmp/test",

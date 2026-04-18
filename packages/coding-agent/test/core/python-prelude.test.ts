@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resetPreludeDocsCache, warmPythonEnvironment } from "@oh-my-pi/pi-coding-agent/ipy/executor";
-import { getPythonToolDescription, PythonTool } from "@oh-my-pi/pi-coding-agent/tools/python";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { resetPreludeDocsCache, warmPythonEnvironment } from "oh-my-gui-pi/ipy/executor";
+import { getPythonToolDescription, PythonTool } from "oh-my-gui-pi/tools/python";
 import { $which, getProjectDir } from "@oh-my-pi/pi-utils";
 
 const resolvePythonPath = (): string | null => {

@@ -7,7 +7,7 @@
  */
 import type { AgentEvent, AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
 import type { Model } from "@oh-my-pi/pi-ai";
-import type { AgentSession, AgentSessionEvent, AuthStorage, SessionStats } from "@oh-my-pi/pi-coding-agent";
+import type { AgentSession, AgentSessionEvent, AuthStorage, SessionStats } from "oh-my-gui-pi";
 import {
 	type CreateAgentSessionResult,
 	createAgentSession,
@@ -15,7 +15,7 @@ import {
 	type ModelRegistry,
 	SessionManager,
 	Settings,
-} from "@oh-my-pi/pi-coding-agent";
+} from "oh-my-gui-pi";
 
 export type InProcessEventListener = (event: AgentEvent) => void;
 
@@ -49,7 +49,7 @@ export interface DiscoverSharedInfraOptions {
 
 /** Discover shared infrastructure once for the entire benchmark run. */
 export async function discoverSharedInfra(options: DiscoverSharedInfraOptions = {}): Promise<SharedInfra> {
-	const { ModelRegistry: MR } = await import("@oh-my-pi/pi-coding-agent");
+	const { ModelRegistry: MR } = await import("oh-my-gui-pi");
 	const authStorage = await discoverAuthStorage();
 	const modelRegistry = new MR(authStorage);
 

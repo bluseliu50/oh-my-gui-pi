@@ -7,15 +7,15 @@ import {
 	type PythonKernelExecutor,
 	resetPreludeDocsCache,
 	warmPythonEnvironment,
-} from "@oh-my-pi/pi-coding-agent/ipy/executor";
+} from "oh-my-gui-pi/ipy/executor";
 import {
 	type KernelExecuteOptions,
 	type KernelExecuteResult,
 	type KernelShutdownResult,
 	type PreludeHelper,
 	PythonKernel,
-} from "@oh-my-pi/pi-coding-agent/ipy/kernel";
-import { DEFAULT_MAX_BYTES } from "@oh-my-pi/pi-coding-agent/session/streaming-output";
+} from "oh-my-gui-pi/ipy/kernel";
+import { DEFAULT_MAX_BYTES } from "oh-my-gui-pi/session/streaming-output";
 import { TempDir } from "@oh-my-pi/pi-utils";
 
 class FakeKernel implements PythonKernelExecutor {

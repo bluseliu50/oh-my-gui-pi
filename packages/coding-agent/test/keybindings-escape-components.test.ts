@@ -1,12 +1,12 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import { getBundledModel } from "@oh-my-pi/pi-ai";
-import { KeybindingsManager } from "@oh-my-pi/pi-coding-agent/config/keybindings";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ModelSelectorComponent } from "@oh-my-pi/pi-coding-agent/modes/components/model-selector";
-import { SessionSelectorComponent } from "@oh-my-pi/pi-coding-agent/modes/components/session-selector";
-import { initTheme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { KeybindingsManager } from "oh-my-gui-pi/config/keybindings";
+import type { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { ModelSelectorComponent } from "oh-my-gui-pi/modes/components/model-selector";
+import { SessionSelectorComponent } from "oh-my-gui-pi/modes/components/session-selector";
+import { initTheme } from "oh-my-gui-pi/modes/theme/theme";
+import type { SessionInfo } from "oh-my-gui-pi/session/session-manager";
 import { setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
 
 beforeAll(() => {

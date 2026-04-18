@@ -5,7 +5,7 @@
  */
 import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
 import { getModel } from "@oh-my-pi/pi-ai";
-import { createAgentSession, discoverAuthStorage, discoverModels } from "@oh-my-pi/pi-coding-agent";
+import { createAgentSession, discoverAuthStorage, discoverModels } from "oh-my-gui-pi";
 
 // Set up auth storage and model registry
 const authStorage = await discoverAuthStorage();

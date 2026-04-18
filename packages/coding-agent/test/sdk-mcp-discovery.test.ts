@@ -4,10 +4,10 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
 import { Effort, getBundledModel, type Model } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import type { CustomTool } from "oh-my-gui-pi/extensibility/custom-tools/types";
+import { createAgentSession } from "oh-my-gui-pi/sdk";
+import { SessionManager } from "oh-my-gui-pi/session/session-manager";
 import { Snowflake } from "@oh-my-pi/pi-utils";
 import { Type } from "@sinclair/typebox";
 

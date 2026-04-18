@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { renderOutputBlock } from "@oh-my-pi/pi-coding-agent/tui/output-block";
+import { getThemeByName } from "oh-my-gui-pi/modes/theme/theme";
+import { renderOutputBlock } from "oh-my-gui-pi/tui/output-block";
 import { ImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
 
 type MutableTerminalInfo = {

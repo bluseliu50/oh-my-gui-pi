@@ -4,7 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { OAuthCredentials, UsageProvider } from "@oh-my-pi/pi-ai";
 import * as ai from "@oh-my-pi/pi-ai";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
 import { Snowflake } from "@oh-my-pi/pi-utils";
 
 describe("AuthStorage account rotation", () => {

@@ -12,6 +12,7 @@ import { checkPythonKernelAvailability } from "../ipy/kernel";
 import { LspTool } from "../lsp";
 import type { DiscoverableMCPSearchIndex, DiscoverableMCPTool } from "../mcp/discoverable-tool-metadata";
 import type { PlanModeState } from "../plan-mode/state";
+import type { PendingActionSummary } from "./pending-action";
 import type { CustomMessage } from "../session/messages";
 import type { ToolChoiceQueue } from "../session/tool-choice-queue";
 import { TaskTool } from "../task";
@@ -195,6 +196,12 @@ export interface ToolSession {
 	steer?(message: { customType: string; content: string; details?: unknown }): void;
 	/** Peek the currently in-flight tool-choice queue directive's invocation handler. Used by the `resolve` tool to dispatch to the pending action. */
 	peekQueueInvoker?(): ((input: unknown) => Promise<unknown> | unknown) | undefined;
+	/** Get session-level pending resolve actions for review UIs. */
+	getPendingActions?: () => PendingActionSummary[];
+	/** Register a pending resolve action for review UIs. */
+	registerPendingAction?: (action: PendingActionSummary) => void;
+	/** Clear a pending resolve action once applied or discarded. */
+	resolvePendingAction?: (actionId: string) => void;
 	/** Get active checkpoint state if any. */
 	getCheckpointState?: () => CheckpointState | undefined;
 	/** Set or clear active checkpoint state. */

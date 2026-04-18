@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { _resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-coding-agent/modes/components/tool-execution";
-import * as themeModule from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { resetVimRendererStateForTest, VimTool, vimToolRenderer } from "@oh-my-pi/pi-coding-agent/tools/vim";
-import { VimBuffer } from "@oh-my-pi/pi-coding-agent/vim/buffer";
-import { VimEngine } from "@oh-my-pi/pi-coding-agent/vim/engine";
-import { parseKeySequences } from "@oh-my-pi/pi-coding-agent/vim/parser";
+import { _resetSettingsForTest, Settings } from "oh-my-gui-pi/config/settings";
+import { ToolExecutionComponent } from "oh-my-gui-pi/modes/components/tool-execution";
+import * as themeModule from "oh-my-gui-pi/modes/theme/theme";
+import type { ToolSession } from "oh-my-gui-pi/tools";
+import { resetVimRendererStateForTest, VimTool, vimToolRenderer } from "oh-my-gui-pi/tools/vim";
+import { VimBuffer } from "oh-my-gui-pi/vim/buffer";
+import { VimEngine } from "oh-my-gui-pi/vim/engine";
+import { parseKeySequences } from "oh-my-gui-pi/vim/parser";
 import type { TUI } from "@oh-my-pi/pi-tui";
 
 function textResult(result: { content: Array<{ type: string; text?: string }> }): string {

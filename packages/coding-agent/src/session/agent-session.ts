@@ -135,6 +135,7 @@ import { outputMeta } from "../tools/output-meta";
 import { resolveToCwd } from "../tools/path-utils";
 import { isAutoQaEnabled } from "../tools/report-tool-issue";
 import { getLatestTodoPhasesFromEntries, type TodoItem, type TodoPhase } from "../tools/todo-write";
+import type { PendingActionSummary } from "../tools/pending-action";
 import { ToolError } from "../tools/tool-errors";
 import { clampTimeout } from "../tools/tool-timeouts";
 import { parseCommandArgs } from "../utils/command-args";
@@ -193,7 +194,9 @@ export type AgentSessionEvent =
 	| { type: "retry_fallback_succeeded"; model: string; role: string }
 	| { type: "ttsr_triggered"; rules: Rule[] }
 	| { type: "todo_reminder"; todos: TodoItem[]; attempt: number; maxAttempts: number }
-	| { type: "todo_auto_clear" };
+	| { type: "todo_auto_clear" }
+	| { type: "pending_action_added"; action: PendingActionSummary }
+	| { type: "pending_action_resolved"; actionId: string };
 
 /** Listener function for agent session events */
 export type AgentSessionEventListener = (event: AgentSessionEvent) => void;
@@ -458,6 +461,7 @@ export class AgentSession {
 	#todoPhases: TodoPhase[] = [];
 	#todoClearTimers = new Map<string, Timer>();
 	#toolChoiceQueue = new ToolChoiceQueue();
+	#pendingActions: PendingActionSummary[] = [];
 
 	// Bash execution state
 	#bashAbortController: AbortController | undefined = undefined;
@@ -3176,6 +3180,23 @@ export class AgentSession {
 	get skillWarnings(): readonly SkillWarning[] {
 		return this.#skillWarnings;
 	}
+
+	getPendingActions(): PendingActionSummary[] {
+		return this.#pendingActions.map(action => ({ ...action, files: action.files ? [...action.files] : undefined }));
+	}
+
+	registerPendingAction(action: PendingActionSummary): void {
+		this.#pendingActions = [action, ...this.#pendingActions.filter(entry => entry.id !== action.id)];
+		this.#emit({ type: "pending_action_added", action });
+	}
+
+	resolvePendingAction(actionId: string): void {
+		const nextActions = this.#pendingActions.filter(action => action.id !== actionId);
+		if (nextActions.length === this.#pendingActions.length) return;
+		this.#pendingActions = nextActions;
+		this.#emit({ type: "pending_action_resolved", actionId });
+	}
+
 
 	getTodoPhases(): TodoPhase[] {
 		return this.#cloneTodoPhases(this.#todoPhases);

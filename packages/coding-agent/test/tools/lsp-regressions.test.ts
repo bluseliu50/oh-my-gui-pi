@@ -2,18 +2,18 @@ import { describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { RenderResultOptions } from "@oh-my-pi/pi-agent-core";
-import { LspTool } from "@oh-my-pi/pi-coding-agent/lsp";
-import * as lspClient from "@oh-my-pi/pi-coding-agent/lsp/client";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { getServersForFile, loadConfig } from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { renderCall, renderResult } from "@oh-my-pi/pi-coding-agent/lsp/render";
+import { LspTool } from "oh-my-gui-pi/lsp";
+import * as lspClient from "oh-my-gui-pi/lsp/client";
+import * as lspConfig from "oh-my-gui-pi/lsp/config";
+import { getServersForFile, loadConfig } from "oh-my-gui-pi/lsp/config";
+import { renderCall, renderResult } from "oh-my-gui-pi/lsp/render";
 import type {
 	CodeAction,
 	Diagnostic,
 	LspClient,
 	ServerConfig,
 	SymbolInformation,
-} from "@oh-my-pi/pi-coding-agent/lsp/types";
+} from "oh-my-gui-pi/lsp/types";
 import {
 	applyCodeAction,
 	collectGlobMatches,
@@ -24,10 +24,10 @@ import {
 	hasGlobPattern,
 	resolveDiagnosticTargets,
 	resolveSymbolColumn,
-} from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import { getThemeByName } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { clampTimeout } from "@oh-my-pi/pi-coding-agent/tools/tool-timeouts";
+} from "oh-my-gui-pi/lsp/utils";
+import { getThemeByName } from "oh-my-gui-pi/modes/theme/theme";
+import type { ToolSession } from "oh-my-gui-pi/tools";
+import { clampTimeout } from "oh-my-gui-pi/tools/tool-timeouts";
 import { sanitizeText } from "@oh-my-pi/pi-natives";
 import * as piUtils from "@oh-my-pi/pi-utils";
 import { TempDir } from "@oh-my-pi/pi-utils";

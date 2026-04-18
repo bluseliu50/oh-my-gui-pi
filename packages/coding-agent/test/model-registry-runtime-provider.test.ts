@@ -11,8 +11,8 @@ import {
 	type OAuthCredentials,
 	unregisterOAuthProviders,
 } from "@oh-my-pi/pi-ai";
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { ModelRegistry, type ProviderConfigInput } from "oh-my-gui-pi/config/model-registry";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
 import { Snowflake } from "@oh-my-pi/pi-utils";
 
 describe("ModelRegistry runtime provider registration", () => {

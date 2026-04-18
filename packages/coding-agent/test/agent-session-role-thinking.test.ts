@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import { Agent } from "@oh-my-pi/pi-agent-core";
 import { Effort, getBundledModel } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { AgentSession } from "oh-my-gui-pi/session/agent-session";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
+import { SessionManager } from "oh-my-gui-pi/session/session-manager";
 import { TempDir } from "@oh-my-pi/pi-utils";
 
 describe("AgentSession role model thinking behavior", () => {

@@ -7,6 +7,8 @@ import { type Static, Type } from "@sinclair/typebox";
 import type { RenderResultOptions } from "../extensibility/custom-tools/types";
 import type { Theme } from "../modes/theme/theme";
 import type { ToolSession } from "../sdk";
+import { generateDiffString } from "../edit";
+import { queueResolveHandler } from "./resolve";
 import { Hasher, type RenderCache, renderCodeCell, renderStatusLine } from "../tui";
 import { resolveToCwd } from "./path-utils";
 import { formatCount, formatErrorMessage, PREVIEW_LIMITS } from "./render-utils";
@@ -158,24 +160,43 @@ export class NotebookTool implements AgentTool<typeof notebookSchema, NotebookTo
 				}
 			}
 
-			// Write back with single-space indentation
-			await Bun.write(absolutePath, JSON.stringify(notebook, null, 1));
-
+			const nextNotebookJson = JSON.stringify(notebook, null, 1);
+			const previousNotebookJson = JSON.stringify(await Bun.file(absolutePath).json(), null, 1);
 			const newCellCount = notebook.cells.length;
+			const details: NotebookToolDetails = {
+				action: action as "edit" | "insert" | "delete",
+				cellIndex: cell_index,
+				cellType: finalCellType,
+				totalCells: newCellCount,
+				cellSource,
+			};
+			queueResolveHandler(this.session, {
+				label: `Notebook: ${notebook_path} cell ${cell_index}`,
+				sourceToolName: this.name,
+				files: [notebook_path],
+				diff: generateDiffString(previousNotebookJson, nextNotebookJson).diff,
+				apply: async (_reason: string) => {
+					await Bun.write(absolutePath, nextNotebookJson);
+					return {
+						content: [
+							{
+								type: "text",
+								text: `${resultMessage}. Notebook now has ${newCellCount} cells.`,
+							},
+						],
+						details,
+					};
+				},
+			});
+
 			return {
 				content: [
 					{
 						type: "text",
-						text: `${resultMessage}. Notebook now has ${newCellCount} cells.`,
+						text: `Prepared ${action} for cell ${cell_index} in ${notebook_path}.`,
 					},
 				],
-				details: {
-					action: action as "edit" | "insert" | "delete",
-					cellIndex: cell_index,
-					cellType: finalCellType,
-					totalCells: newCellCount,
-					cellSource,
-				},
+				details,
 			};
 		});
 	}

@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, test, vi } from "bun:test";
 import { getBundledModel, type Model } from "@oh-my-pi/pi-ai";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ModelSelectorComponent } from "@oh-my-pi/pi-coding-agent/modes/components/model-selector";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
+import type { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { ModelSelectorComponent } from "oh-my-gui-pi/modes/components/model-selector";
+import { getThemeByName, setThemeInstance } from "oh-my-gui-pi/modes/theme/theme";
 import type { TUI } from "@oh-my-pi/pi-tui";
 
 function normalizeRenderedText(text: string): string {

@@ -4,12 +4,12 @@ import { Agent } from "@oh-my-pi/pi-agent-core";
 import type { AssistantMessage } from "@oh-my-pi/pi-ai";
 import { getBundledModel } from "@oh-my-pi/pi-ai/models";
 import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRunner, loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { ExtensionRunner, loadExtensions } from "oh-my-gui-pi/extensibility/extensions";
+import { AgentSession, type AgentSessionEvent } from "oh-my-gui-pi/session/agent-session";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
+import { SessionManager } from "oh-my-gui-pi/session/session-manager";
 import { TempDir } from "@oh-my-pi/pi-utils";
 
 class MockAssistantStream extends AssistantMessageEventStream {}

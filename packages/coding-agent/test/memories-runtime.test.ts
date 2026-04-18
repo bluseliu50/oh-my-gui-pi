@@ -4,13 +4,13 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { Model } from "@oh-my-pi/pi-ai";
 import * as ai from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { Settings } from "oh-my-gui-pi/config/settings";
 import {
 	buildMemoryToolDeveloperInstructions,
 	getMemoryRoot,
 	startMemoryStartupTask,
-} from "@oh-my-pi/pi-coding-agent/memories";
-import * as memoryStorage from "@oh-my-pi/pi-coding-agent/memories/storage";
+} from "oh-my-gui-pi/memories";
+import * as memoryStorage from "oh-my-gui-pi/memories/storage";
 import { getAgentDbPath, Snowflake } from "@oh-my-pi/pi-utils";
 
 interface SessionFixture {

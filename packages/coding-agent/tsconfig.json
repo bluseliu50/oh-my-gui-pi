@@ -4,5 +4,10 @@
 		"src",
 		"test",
 		"scripts"
+	],
+	"exclude": [
+		"dist",
+		"node_modules",
+		"src/desktop/renderer"
 	]
 }

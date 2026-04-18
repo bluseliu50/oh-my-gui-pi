@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { CustomToolContext } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools";
-import type { ReadonlySessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { geminiImageTool } from "@oh-my-pi/pi-coding-agent/tools/gemini-image";
+import type { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import type { CustomToolContext } from "oh-my-gui-pi/extensibility/custom-tools";
+import type { ReadonlySessionManager } from "oh-my-gui-pi/session/session-manager";
+import { geminiImageTool } from "oh-my-gui-pi/tools/gemini-image";
 
 const originalFetch = global.fetch;
 const originalOpenRouterKey = Bun.env.OPENROUTER_API_KEY;

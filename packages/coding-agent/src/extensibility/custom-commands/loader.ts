@@ -183,7 +183,7 @@ export async function loadCustomCommands(options: LoadCustomCommandsOptions = {}
 		exec: (command: string, args: string[], execOptions) =>
 			execCommand(command, args, execOptions?.cwd ?? cwd, execOptions),
 		typebox,
-		pi: await import("@oh-my-pi/pi-coding-agent"),
+		pi: await import("oh-my-gui-pi"),
 	};
 
 	// 1. Load bundled commands first (lowest priority - can be overridden)

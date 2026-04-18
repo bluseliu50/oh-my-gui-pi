@@ -136,7 +136,7 @@ async function createHookAPI(
 		},
 		logger,
 		typebox,
-		pi: await import("@oh-my-pi/pi-coding-agent"),
+		pi: await import("oh-my-gui-pi"),
 	} as HookAPI;
 
 	return {

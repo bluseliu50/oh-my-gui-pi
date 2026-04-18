@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { _resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
+import { _resetSettingsForTest, Settings } from "oh-my-gui-pi/config/settings";
+import { EditTool } from "oh-my-gui-pi/edit";
+import type { ToolSession } from "oh-my-gui-pi/tools";
+import { ReadTool } from "oh-my-gui-pi/tools/read";
 
 const FIXTURE_DIR = path.join(import.meta.dir, "..", "fixtures");
 

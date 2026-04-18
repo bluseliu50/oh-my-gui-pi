@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { pythonToolRenderer } from "@oh-my-pi/pi-coding-agent/tools/python";
+import { getThemeByName } from "oh-my-gui-pi/modes/theme/theme";
+import { pythonToolRenderer } from "oh-my-gui-pi/tools/python";
 import { sanitizeText } from "@oh-my-pi/pi-natives";
 
 describe("pythonToolRenderer", () => {

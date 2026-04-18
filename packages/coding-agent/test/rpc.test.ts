@@ -9,9 +9,9 @@ import {
 	type FileEntry,
 	parseSessionEntries,
 	type SessionMessageEntry,
-} from "@oh-my-pi/pi-coding-agent";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import type { BashExecutionMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
+} from "oh-my-gui-pi";
+import { RpcClient } from "oh-my-gui-pi/modes/rpc/rpc-client";
+import type { BashExecutionMessage } from "oh-my-gui-pi/session/messages";
 import { Snowflake } from "@oh-my-pi/pi-utils";
 import { e2eApiKey } from "./utilities";
 

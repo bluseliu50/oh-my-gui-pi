@@ -21,7 +21,7 @@ import type {
 	TextContent,
 	ToolResultMessage,
 } from "@oh-my-pi/pi-ai";
-import type * as piCodingAgent from "@oh-my-pi/pi-coding-agent";
+import type * as piCodingAgent from "oh-my-gui-pi";
 import type { AutocompleteItem, Component, EditorComponent, EditorTheme, KeyId, TUI } from "@oh-my-pi/pi-tui";
 import type { Static, TSchema } from "@sinclair/typebox";
 import type { Rule } from "../../capability/rule";

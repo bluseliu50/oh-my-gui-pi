@@ -1,0 +1,20 @@
+{
+	"include": [
+		"src/desktop/renderer"
+	],
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"lib": [
+			"ES2024",
+			"DOM",
+			"DOM.Iterable"
+		],
+		"noEmit": true,
+		"strict": true,
+		"types": [
+			"bun",
+			"react",
+			"react-dom"
+		]
+	}
+}

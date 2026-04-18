@@ -85,7 +85,7 @@ export class CustomToolLoader {
 	#seenNames: Set<string>;
 
 	constructor(
-		pi: typeof import("@oh-my-pi/pi-coding-agent"),
+		pi: typeof import("oh-my-gui-pi"),
 		cwd: string,
 		builtInToolNames: string[],
 		pushPendingAction?: (action: {
@@ -171,7 +171,7 @@ export async function loadCustomTools(
 	}) => void,
 ) {
 	const loader = new CustomToolLoader(
-		await import("@oh-my-pi/pi-coding-agent"),
+		await import("oh-my-gui-pi"),
 		cwd,
 		builtInToolNames,
 		pushPendingAction,

@@ -117,7 +117,7 @@ class ConcreteExtensionAPI implements ExtensionAPI, IExtensionRuntime {
 	}> = [];
 
 	constructor(
-		public readonly pi: typeof import("@oh-my-pi/pi-coding-agent"),
+		public readonly pi: typeof import("oh-my-gui-pi"),
 		private readonly extension: Extension,
 		private readonly runtime: IExtensionRuntime,
 		private readonly cwd: string,
@@ -281,7 +281,7 @@ async function loadExtension(
 
 		const extension = createExtension(extensionPath, resolvedPath);
 		const api = new ConcreteExtensionAPI(
-			await import("@oh-my-pi/pi-coding-agent"),
+			await import("oh-my-gui-pi"),
 			extension,
 			runtime,
 			cwd,
@@ -307,7 +307,7 @@ export async function loadExtensionFromFactory(
 	name = "<inline>",
 ): Promise<Extension> {
 	const extension = createExtension(name, name);
-	const api = new ConcreteExtensionAPI(await import("@oh-my-pi/pi-coding-agent"), extension, runtime, cwd, eventBus);
+	const api = new ConcreteExtensionAPI(await import("oh-my-gui-pi"), extension, runtime, cwd, eventBus);
 	await factory(api);
 	return extension;
 }

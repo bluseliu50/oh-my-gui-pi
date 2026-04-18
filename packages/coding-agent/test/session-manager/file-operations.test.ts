@@ -9,7 +9,7 @@ import {
 	resolveResumableSession,
 	type SessionHeader,
 	SessionManager,
-} from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "oh-my-gui-pi/session/session-manager";
 import { getConfigRootDir, getSessionsDir, Snowflake, setAgentDir } from "@oh-my-pi/pi-utils";
 
 describe("loadEntriesFromFile", () => {

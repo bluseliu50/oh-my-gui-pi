@@ -8,8 +8,8 @@
  * 1. Copy this file to ~/.omp/agent/extensions/ (legacy: ~/.pi/agent/extensions/) or your project's .omp/extensions/
  * 2. Use /tools to open the tool selector
  */
-import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent";
-import { getSettingsListTheme } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "oh-my-gui-pi";
+import { getSettingsListTheme } from "oh-my-gui-pi";
 import { Container, type SettingItem, SettingsList } from "@oh-my-pi/pi-tui";
 
 // State persisted to session

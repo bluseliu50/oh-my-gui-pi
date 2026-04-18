@@ -8,20 +8,20 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { Agent } from "@oh-my-pi/pi-agent-core";
 import { getBundledModel } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { Settings } from "oh-my-gui-pi/config/settings";
 import {
 	HookRunner,
 	type LoadedHook,
 	type SessionBeforeCompactEvent,
 	type SessionCompactEvent,
 	type SessionEvent,
-} from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
-import { theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { createTools, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+} from "oh-my-gui-pi/extensibility/hooks";
+import { theme } from "oh-my-gui-pi/modes/theme/theme";
+import { AgentSession } from "oh-my-gui-pi/session/agent-session";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
+import { SessionManager } from "oh-my-gui-pi/session/session-manager";
+import { createTools, type ToolSession } from "oh-my-gui-pi/tools";
 import { Snowflake } from "@oh-my-pi/pi-utils";
 import { e2eApiKey } from "./utilities";
 

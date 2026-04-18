@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { formatSessionDumpText, SessionManager } from "@oh-my-pi/pi-coding-agent";
+import { formatSessionDumpText, SessionManager } from "oh-my-gui-pi";
 import { TempDir } from "@oh-my-pi/pi-utils";
 import { writeConversationDump } from "../src/runner";
 

@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { Agent } from "@oh-my-pi/pi-agent-core";
-import { _resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initTheme, theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
+import { _resetSettingsForTest, Settings } from "oh-my-gui-pi/config/settings";
+import { initTheme, theme } from "oh-my-gui-pi/modes/theme/theme";
 import { TempDir } from "@oh-my-pi/pi-utils";
 import { ModelRegistry } from "../src/config/model-registry";
 import { LSP_STARTUP_EVENT_CHANNEL, type LspStartupEvent } from "../src/lsp/startup-events";

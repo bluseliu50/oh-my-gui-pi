@@ -5,11 +5,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { discoverAndLoadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { discoverAndLoadExtensions } from "oh-my-gui-pi/extensibility/extensions/loader";
+import { ExtensionRunner } from "oh-my-gui-pi/extensibility/extensions/runner";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
+import { SessionManager } from "oh-my-gui-pi/session/session-manager";
 import { getProjectAgentDir, logger, TempDir } from "@oh-my-pi/pi-utils";
 import { filterUserExtensionErrors, filterUserExtensions } from "./utils/filter-user-extensions";
 

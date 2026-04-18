@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { KeybindingsManager } from "@oh-my-pi/pi-coding-agent/config/keybindings";
-import { HookEditorComponent } from "@oh-my-pi/pi-coding-agent/modes/components/hook-editor";
-import { ExtensionUiController } from "@oh-my-pi/pi-coding-agent/modes/controllers/extension-ui-controller";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { KeybindingsManager } from "oh-my-gui-pi/config/keybindings";
+import { HookEditorComponent } from "oh-my-gui-pi/modes/components/hook-editor";
+import { ExtensionUiController } from "oh-my-gui-pi/modes/controllers/extension-ui-controller";
+import { getThemeByName, setThemeInstance } from "oh-my-gui-pi/modes/theme/theme";
+import type { InteractiveModeContext } from "oh-my-gui-pi/modes/types";
 import { setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
 
 beforeAll(async () => {

@@ -13,7 +13,7 @@ import chalk from "chalk";
 import { theme } from "../modes/theme/theme";
 
 const REPO = "can1357/oh-my-pi";
-const PACKAGE = "@oh-my-pi/pi-coding-agent";
+const PACKAGE = "oh-my-gui-pi";
 
 interface ReleaseInfo {
 	tag: string;

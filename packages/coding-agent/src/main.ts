@@ -56,7 +56,7 @@ async function checkForNewVersion(currentVersion: string): Promise<string | unde
 		return;
 	}
 	try {
-		const response = await fetch("https://registry.npmjs.org/@oh-my-pi/pi-coding-agent/latest");
+		const response = await fetch("https://registry.npmjs.org/oh-my-gui-pi/latest");
 		if (!response.ok) return undefined;
 
 		const data = (await response.json()) as { version?: string };

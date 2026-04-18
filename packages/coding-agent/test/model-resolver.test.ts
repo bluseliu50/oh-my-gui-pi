@@ -10,8 +10,8 @@ import {
 	resolveModelOverride,
 	resolveModelRoleValue,
 	resolveModelScope,
-} from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "oh-my-gui-pi/config/model-resolver";
+import { Settings } from "oh-my-gui-pi/config/settings";
 
 // Mock models for testing
 const mockModels: Model<"anthropic-messages">[] = [

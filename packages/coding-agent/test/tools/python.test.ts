@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pythonExecutor from "@oh-my-pi/pi-coding-agent/ipy/executor";
-import { createTools, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { PythonTool } from "@oh-my-pi/pi-coding-agent/tools/python";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import * as pythonExecutor from "oh-my-gui-pi/ipy/executor";
+import { createTools, type ToolSession } from "oh-my-gui-pi/tools";
+import { PythonTool } from "oh-my-gui-pi/tools/python";
 import { TempDir } from "@oh-my-pi/pi-utils";
 
 let previousSkipCheck: string | undefined;

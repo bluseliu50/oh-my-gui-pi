@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { type TodoPhase, TodoWriteTool } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import type { ToolSession } from "oh-my-gui-pi/tools";
+import { type TodoPhase, TodoWriteTool } from "oh-my-gui-pi/tools";
 
 function createSession(initialPhases: TodoPhase[] = []): ToolSession {
 	let phases = initialPhases;

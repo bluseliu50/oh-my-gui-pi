@@ -9,6 +9,8 @@ import type { Effort, ImageContent, Model } from "@oh-my-pi/pi-ai";
 import type { BashResult } from "../../exec/bash-executor";
 import type { SessionStats } from "../../session/agent-session";
 import type { CompactionResult } from "../../session/compaction";
+import type { PlanModeState } from "../../plan-mode/state";
+import type { PendingActionSummary } from "../../tools/pending-action";
 import type { TodoPhase } from "../../tools/todo-write";
 
 // ============================================================================
@@ -86,9 +88,13 @@ export interface RpcSessionState {
 	messageCount: number;
 	queuedMessageCount: number;
 	todoPhases: TodoPhase[];
+	planMode?: PlanModeState;
+	pendingActions: PendingActionSummary[];
+	activePendingActionId?: string;
 	/** For session dump / export (plain-text parity with /dump). */
 	systemPrompt?: string;
 	dumpTools?: Array<{ name: string; description: string; parameters: unknown }>;
+
 }
 
 // ============================================================================

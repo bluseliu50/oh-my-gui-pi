@@ -13,7 +13,7 @@ import { Text } from "@oh-my-pi/pi-tui";
 import { isEnoent, isRecord, prompt, untilAborted } from "@oh-my-pi/pi-utils";
 import { type Static, Type } from "@sinclair/typebox";
 import { unzipSync, zipSync } from "fflate";
-import { stripHashlinePrefixes } from "../edit";
+import { generateDiffString, stripHashlinePrefixes } from "../edit";
 import type { RenderResultOptions } from "../extensibility/custom-tools/types";
 import { createLspWritethrough, type FileDiagnosticsResult, type WritethroughCallback, writethroughNoop } from "../lsp";
 import { getLanguageFromPath, type Theme } from "../modes/theme/theme";
@@ -46,6 +46,7 @@ import {
 	updateRowByRowId,
 } from "./sqlite-reader";
 import { ToolError } from "./tool-errors";
+import { queueResolveHandler } from "./resolve";
 import { toolResult } from "./tool-result";
 
 const writeSchema = Type.Object({
@@ -477,38 +478,65 @@ export class WriteTool implements AgentTool<typeof writeSchema, WriteToolDetails
 				return sqliteResult;
 			}
 
-			enforcePlanModeWrite(this.session, path, { op: "create" });
-			const absolutePath = resolvePlanPath(this.session, path);
-			const batchRequest = getLspBatchRequest(context?.toolCall);
+				enforcePlanModeWrite(this.session, path, { op: "create" });
+				const absolutePath = resolvePlanPath(this.session, path);
+				const batchRequest = getLspBatchRequest(context?.toolCall);
+				let previousContent = "";
+				let existed = false;
 
-			// Check if file exists and is auto-generated before overwriting
-			if (await fs.exists(absolutePath)) {
-				await assertEditableFile(absolutePath, path);
-			}
+				try {
+					previousContent = await Bun.file(absolutePath).text();
+					existed = true;
+					await assertEditableFile(absolutePath, path);
+				} catch (error) {
+					if (!isEnoent(error)) {
+						throw error;
+					}
+				}
 
-			const diagnostics = await this.#writethrough(absolutePath, cleanContent, signal, undefined, batchRequest);
-			invalidateFsScanAfterWrite(absolutePath);
+				const diff = generateDiffString(previousContent, cleanContent).diff;
+				queueResolveHandler(this.session, {
+					label: `Write: ${path}`,
+					sourceToolName: this.name,
+					files: [path],
+					diff,
+					apply: async (_reason: string) => {
+						const diagnostics = await this.#writethrough(absolutePath, cleanContent, signal, undefined, batchRequest);
+						invalidateFsScanAfterWrite(absolutePath);
 
-			let resultText = `Successfully wrote ${cleanContent.length} bytes to ${path}`;
-			if (stripped) {
-				resultText += `\nNote: auto-stripped hashline display prefixes from content before writing.`;
-			}
-			if (!diagnostics) {
+						let resultText = `Successfully wrote ${cleanContent.length} bytes to ${path}`;
+						if (stripped) {
+							resultText += `\nNote: auto-stripped hashline display prefixes from content before writing.`;
+						}
+						if (!diagnostics) {
+							return {
+								content: [{ type: "text", text: resultText }],
+								details: {},
+							};
+						}
+
+						return {
+							content: [{ type: "text", text: resultText }],
+							details: {
+								diagnostics,
+								meta: outputMeta()
+									.diagnostics(diagnostics.summary, diagnostics.messages ?? [])
+									.get(),
+							},
+						};
+					},
+				});
+
+				let resultText = `${existed ? "Prepared update for" : "Prepared write for"} ${path}`;
+				if (stripped) {
+					resultText += `\nNote: auto-stripped hashline display prefixes from content before writing.`;
+				}
 				return {
 					content: [{ type: "text", text: resultText }],
-					details: {},
+					details: {
+						meta: outputMeta().get(),
+					},
 				};
-			}
-
-			return {
-				content: [{ type: "text", text: resultText }],
-				details: {
-					diagnostics,
-					meta: outputMeta()
-						.diagnostics(diagnostics.summary, diagnostics.messages ?? [])
-						.get(),
-				},
-			};
 		});
 	}
 }

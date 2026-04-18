@@ -3,9 +3,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { Effort, type Model, type OpenAICompat, type ThinkingConfig, writeModelCache } from "@oh-my-pi/pi-ai";
-import { kNoAuth, MODEL_ROLES, ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { _resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { kNoAuth, MODEL_ROLES, ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { _resetSettingsForTest, Settings } from "oh-my-gui-pi/config/settings";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
 import { hookFetch, Snowflake } from "@oh-my-pi/pi-utils";
 
 describe("ModelRegistry", () => {

@@ -3,12 +3,12 @@ import * as path from "node:path";
 import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
 import { getBundledModel } from "@oh-my-pi/pi-ai";
 import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { ModelRegistry } from "oh-my-gui-pi/config/model-registry";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { AgentSession } from "oh-my-gui-pi/session/agent-session";
+import { AuthStorage } from "oh-my-gui-pi/session/auth-storage";
+import { convertToLlm } from "oh-my-gui-pi/session/messages";
+import { SessionManager } from "oh-my-gui-pi/session/session-manager";
 import { TempDir } from "@oh-my-pi/pi-utils";
 import { Type } from "@sinclair/typebox";
 

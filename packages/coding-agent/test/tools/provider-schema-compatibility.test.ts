@@ -8,8 +8,8 @@ import {
 	validateSchemaCompatibility,
 	validateStrictSchemaEnforcement,
 } from "@oh-my-pi/pi-ai/utils/schema";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createTools, HIDDEN_TOOLS, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "oh-my-gui-pi/config/settings";
+import { createTools, HIDDEN_TOOLS, type ToolSession } from "oh-my-gui-pi/tools";
 
 interface ToolSchemaEntry {
 	name: string;

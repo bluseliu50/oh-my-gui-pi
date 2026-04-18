@@ -588,6 +588,9 @@ export async function runRpcMode(session: AgentSession): Promise<never> {
 					messageCount: session.messages.length,
 					queuedMessageCount: session.queuedMessageCount,
 					todoPhases: session.getTodoPhases(),
+					planMode: session.getPlanModeState(),
+					pendingActions: session.getPendingActions(),
+					activePendingActionId: session.getPendingActions()[0]?.id,
 					systemPrompt: session.systemPrompt,
 					dumpTools: session.agent.state.tools.map(tool => ({
 						name: tool.name,

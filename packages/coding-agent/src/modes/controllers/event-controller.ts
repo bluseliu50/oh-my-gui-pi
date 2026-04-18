@@ -52,6 +52,8 @@ export class EventController {
 			ttsr_triggered: e => this.#handleTtsrTriggered(e),
 			todo_reminder: e => this.#handleTodoReminder(e),
 			todo_auto_clear: e => this.#handleTodoAutoClear(e),
+			pending_action_added: async _e => {},
+			pending_action_resolved: async _e => {},
 		} satisfies AgentSessionEventHandlers;
 	}
 

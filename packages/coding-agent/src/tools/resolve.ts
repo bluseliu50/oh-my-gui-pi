@@ -1,13 +1,14 @@
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
 import type { Component } from "@oh-my-pi/pi-tui";
 import { Text } from "@oh-my-pi/pi-tui";
-import { prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { Snowflake, prompt, untilAborted } from "@oh-my-pi/pi-utils";
 import { type Static, Type } from "@sinclair/typebox";
 import type { RenderResultOptions } from "../extensibility/custom-tools/types";
 import type { Theme } from "../modes/theme/theme";
 import resolveDescription from "../prompts/tools/resolve.md" with { type: "text" };
 import { Ellipsis, padToWidth, renderStatusLine, truncateToWidth } from "../tui";
 import type { ToolSession } from ".";
+import type { PendingActionSummary } from "./pending-action";
 import { replaceTabs } from "./render-utils";
 import { ToolError } from "./tool-errors";
 
@@ -46,6 +47,8 @@ export function queueResolveHandler(
 	options: {
 		label: string;
 		sourceToolName: string;
+		files?: string[];
+		diff?: string;
 		apply(reason: string): Promise<AgentToolResult<unknown>>;
 		reject?(reason: string): Promise<AgentToolResult<unknown> | undefined>;
 	},
@@ -54,34 +57,48 @@ export function queueResolveHandler(
 	const forced = session.buildToolChoice?.("resolve");
 	if (!queue || !forced || typeof forced === "string") return;
 
+	const pendingActionId = Snowflake.next() as string;
+	const pendingAction: PendingActionSummary = {
+		id: pendingActionId,
+		label: options.label,
+		sourceToolName: options.sourceToolName,
+		createdAt: Date.now(),
+		files: options.files ? [...options.files] : undefined,
+		diff: options.diff,
+	};
 	const detailsFor = (params: ResolveParams): ResolveToolDetails => ({
 		action: params.action,
 		reason: params.reason,
 		sourceToolName: options.sourceToolName,
 		label: options.label,
 	});
-
-	queue.pushOnce(forced, {
-		label: `pending-action:${options.sourceToolName}`,
-		now: true,
-		onRejected: () => "requeue",
-		onInvoked: async (input: unknown) => {
-			const params = input as ResolveParams;
-			if (params.action === "apply") {
-				const result = await options.apply(params.reason);
+	const resolvePendingAction = () => session.resolvePendingAction?.(pendingActionId);
+	const applyPendingResult = async (params: ResolveParams): Promise<AgentToolResult<unknown>> => {
+		if (params.action === "apply") {
+			const result = await options.apply(params.reason);
+			resolvePendingAction();
+			return { ...result, details: detailsFor(params) };
+		}
+		if (params.action === "discard" && options.reject != null) {
+			const result = await options.reject(params.reason);
+			resolvePendingAction();
+			if (result != null) {
 				return { ...result, details: detailsFor(params) };
 			}
-			if (params.action === "discard" && options.reject != null) {
-				const result = await options.reject(params.reason);
-				if (result != null) {
-					return { ...result, details: detailsFor(params) };
-				}
-			}
-			return {
-				content: [{ type: "text" as const, text: `Discarded: ${options.label}. Reason: ${params.reason}` }],
-				details: detailsFor(params),
-			};
-		},
+		}
+		resolvePendingAction();
+		return {
+			content: [{ type: "text" as const, text: `Discarded: ${options.label}. Reason: ${params.reason}` }],
+			details: detailsFor(params),
+		};
+	};
+	session.registerPendingAction?.(pendingAction);
+
+	queue.pushOnce(forced, {
+		label: `pending-action:${options.sourceToolName}:${pendingActionId}`,
+		now: true,
+		onRejected: () => "requeue",
+		onInvoked: async (input: unknown) => applyPendingResult(input as ResolveParams),
 	});
 
 	session.steer?.({

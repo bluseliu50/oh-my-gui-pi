@@ -10,7 +10,7 @@
  * correct for that point in history.
  */
 import { StringEnum } from "@oh-my-pi/pi-ai";
-import type { ExtensionAPI, ExtensionContext, Theme } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, Theme } from "oh-my-gui-pi";
 import { matchesKey, Text, truncateToWidth } from "@oh-my-pi/pi-tui";
 import { Type } from "@sinclair/typebox";
 
