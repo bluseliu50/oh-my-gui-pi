@@ -3,23 +3,25 @@
 </p>
 
 <p align="center">
-  <strong>AI coding agent for the terminal</strong>
+  <strong>oh-my-gui-pi</strong><br>
+  A beginner-friendly GUI agent built on top of OMP
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent"><img src="https://img.shields.io/npm/v/@oh-my-pi/pi-coding-agent?style=flat&colorA=222222&colorB=CB3837" alt="npm version"></a>
-  <a href="https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep-E05735?style=flat&colorA=222222" alt="Changelog"></a>
-  <a href="https://github.com/can1357/oh-my-pi/actions"><img src="https://img.shields.io/github/actions/workflow/status/can1357/oh-my-pi/ci.yml?style=flat&colorA=222222&colorB=3FB950" alt="CI"></a>
-  <a href="https://github.com/can1357/oh-my-pi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/can1357/oh-my-pi?style=flat&colorA=222222&colorB=58A6FF" alt="License"></a>
-  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&colorA=222222&logo=typescript&logoColor=white" alt="TypeScript"></a>
-  <a href="https://www.rust-lang.org"><img src="https://img.shields.io/badge/Rust-DEA584?style=flat&colorA=222222&logo=rust&logoColor=white" alt="Rust"></a>
-  <a href="https://bun.sh"><img src="https://img.shields.io/badge/runtime-Bun-f472b6?style=flat&colorA=222222" alt="Bun"></a>
-  <a href="https://discord.gg/4NMW9cdXZa"><img src="https://img.shields.io/badge/Discord-5865F2?style=flat&colorA=222222&logo=discord&logoColor=white" alt="Discord"></a>
+  Built on top of <a href="https://github.com/can1357/oh-my-pi">OMP</a>, which itself builds on <a href="https://github.com/badlogic/pi-mono">pi-mono</a> by <a href="https://github.com/mariozechner">@mariozechner</a>
 </p>
 
-<p align="center">
-  Fork of <a href="https://github.com/badlogic/pi-mono">badlogic/pi-mono</a> by <a href="https://github.com/mariozechner">@mariozechner</a>
-</p>
+## A Note from the Developer
+
+**This project is still very early. Please don't try to use it before the first release lands.**
+
+I started this project for my mom because she wanted to play OpenClaw, and what she needed was not a more bot-like agent. She needed a coding agent that could help with everyday stuff like spreadsheets and similar tasks.
+
+So I decided to build a beginner-friendly GUI version of oh-my-pi on top of OMP. Over time, this project may ship with built-in usability improvements, task-focused skills, and bundled MCP integrations. The goal here is less “agent-driven coding” and more “agent-driven daily life.”
+
+If you're looking for a developer tool, you should probably use the original OMP instead. But if you ran into the same problem I did — wanting an agent that a family member with zero background can actually pick up and use — then this project might be for you.
+
+Contributions are very welcome.
 
 ## Table of Contents
 
