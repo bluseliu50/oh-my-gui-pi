@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { DesktopBootstrap } from "../../common";
+import type { DesktopBootstrap, DesktopSlashCommand } from "../../common";
 import {
 	createDesktopInitialState,
 	createExtensionResponse,
@@ -10,6 +10,7 @@ import {
 
 export interface UseDesktopSessionResult {
 	state: DesktopState | null;
+	slashCommands: DesktopSlashCommand[];
 	loading: boolean;
 	error: string | null;
 	refresh(): Promise<void>;
@@ -49,6 +50,28 @@ export function useDesktopSession(): UseDesktopSessionResult {
 	}, [refresh]);
 
 	const sendPrompt = async (message: string): Promise<void> => {
+		const currentState = state;
+		const planCommandMatch = /^\/plan(?:\s+(.*))?$/.exec(message);
+		if (planCommandMatch) {
+			const planModeResponse = await window.ompDesktop.request({
+				type: "set_plan_mode",
+				enabled: !currentState?.session?.planMode?.enabled,
+			});
+			setState(current => (current ? reduceDesktopFrame(current, planModeResponse) : current));
+			if (!planModeResponse.success) {
+				throw new Error(planModeResponse.error);
+			}
+			const initialPrompt = planCommandMatch[1]?.trim();
+			if (!currentState?.session?.planMode?.enabled && initialPrompt) {
+				const promptResponse = await window.ompDesktop.request({ type: "prompt", message: initialPrompt });
+				setState(current => (current ? reduceDesktopFrame(current, promptResponse) : current));
+				if (!promptResponse.success) {
+					throw new Error(promptResponse.error);
+				}
+			}
+			return;
+		}
+
 		const response = await window.ompDesktop.request({ type: "prompt", message });
 		setState(current => (current ? reduceDesktopFrame(current, response) : current));
 		if (!response.success) {
@@ -66,15 +89,16 @@ export function useDesktopSession(): UseDesktopSessionResult {
 		setState(current =>
 			current
 				? {
-					...current,
-					activeExtensionRequest: null,
-				}
+						...current,
+						activeExtensionRequest: null,
+					}
 				: current,
 		);
 	};
 
 	return {
 		state,
+		slashCommands: bootstrap?.slashCommands ?? [],
 		loading,
 		error,
 		refresh,

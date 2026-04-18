@@ -1,16 +1,7 @@
 import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
 import type { AgentSessionEvent } from "../../../session/agent-session";
-import type {
-	DesktopBackendFrame,
-	DesktopBackendStatus,
-	DesktopBootstrap,
-	DesktopCommandResponse,
-} from "../../common";
-import type {
-	RpcExtensionUIRequest,
-	RpcExtensionUIResponse,
-	RpcSessionState,
-} from "../../../modes/rpc/rpc-types";
+import type { DesktopBackendFrame, DesktopBackendStatus, DesktopBootstrap, DesktopCommandResponse } from "../../common";
+import type { RpcExtensionUIRequest, RpcExtensionUIResponse, RpcSessionState } from "../../../modes/rpc/rpc-types";
 
 export interface DesktopToolExecutionState {
 	toolCallId: string;
@@ -38,28 +29,37 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isAgentEvent(frame: DesktopBackendFrame): frame is AgentSessionEvent {
-	return isRecord(frame) && typeof frame.type === "string" && [
-		"agent_start",
-		"agent_end",
-		"turn_start",
-		"turn_end",
-		"message_start",
-		"message_update",
-		"message_end",
-		"tool_execution_start",
-		"tool_execution_update",
-		"tool_execution_end",
-		"pending_action_added",
-		"pending_action_resolved",
-	].includes(frame.type);
-	}
+	return (
+		isRecord(frame) &&
+		typeof frame.type === "string" &&
+		[
+			"agent_start",
+			"agent_end",
+			"turn_start",
+			"turn_end",
+			"message_start",
+			"message_update",
+			"message_end",
+			"tool_execution_start",
+			"tool_execution_update",
+			"tool_execution_end",
+			"pending_action_added",
+			"pending_action_resolved",
+		].includes(frame.type)
+	);
+}
 
 function isExtensionUiRequest(frame: DesktopBackendFrame): frame is RpcExtensionUIRequest {
 	return isRecord(frame) && frame.type === "extension_ui_request" && typeof frame.id === "string";
 }
 
 function isResponse(frame: DesktopBackendFrame): frame is DesktopCommandResponse {
-	return isRecord(frame) && frame.type === "response" && typeof frame.command === "string" && typeof frame.success === "boolean";
+	return (
+		isRecord(frame) &&
+		frame.type === "response" &&
+		typeof frame.command === "string" &&
+		typeof frame.success === "boolean"
+	);
 }
 
 export function createDesktopInitialState(bootstrap: DesktopBootstrap): DesktopState {
@@ -115,7 +115,7 @@ export function reduceDesktopFrame(state: DesktopState, frame: DesktopBackendFra
 		if (!frame.success) {
 			return { ...nextState, error: frame.error };
 		}
-		if (frame.command === "get_state") {
+		if (frame.command === "get_state" || frame.command === "set_plan_mode") {
 			return { ...nextState, session: frame.data };
 		}
 		if (frame.command === "get_messages") {
@@ -124,9 +124,9 @@ export function reduceDesktopFrame(state: DesktopState, frame: DesktopBackendFra
 		if (frame.command === "set_todos") {
 			return nextState.session
 				? {
-					...nextState,
-					session: { ...nextState.session, todoPhases: frame.data.todoPhases },
-				}
+						...nextState,
+						session: { ...nextState.session, todoPhases: frame.data.todoPhases },
+					}
 				: nextState;
 		}
 		return nextState;
@@ -135,32 +135,34 @@ export function reduceDesktopFrame(state: DesktopState, frame: DesktopBackendFra
 	if (frame.type === "pending_action_added") {
 		return state.session
 			? {
-				...state,
-				session: {
-					...state.session,
-					pendingActions: [frame.action, ...state.session.pendingActions.filter(action => action.id !== frame.action.id)],
-					activePendingActionId: frame.action.id,
-				},
-			}
+					...state,
+					session: {
+						...state.session,
+						pendingActions: [
+							frame.action,
+							...state.session.pendingActions.filter(action => action.id !== frame.action.id),
+						],
+						activePendingActionId: frame.action.id,
+					},
+				}
 			: state;
 	}
 
 	if (frame.type === "pending_action_resolved") {
 		return state.session
 			? {
-				...state,
-				session: {
-					...state.session,
-					pendingActions: state.session.pendingActions.filter(action => action.id !== frame.actionId),
-					activePendingActionId:
-						state.session.activePendingActionId === frame.actionId
-							? state.session.pendingActions.find(action => action.id !== frame.actionId)?.id
-							: state.session.activePendingActionId,
-				},
-			}
+					...state,
+					session: {
+						...state.session,
+						pendingActions: state.session.pendingActions.filter(action => action.id !== frame.actionId),
+						activePendingActionId:
+							state.session.activePendingActionId === frame.actionId
+								? state.session.pendingActions.find(action => action.id !== frame.actionId)?.id
+								: state.session.activePendingActionId,
+					},
+				}
 			: state;
 	}
-
 
 	if (!isAgentEvent(frame)) {
 		return state;
@@ -238,7 +240,13 @@ export function reduceDesktopFrame(state: DesktopState, frame: DesktopBackendFra
 }
 
 export function isPromptingRequest(request: RpcExtensionUIRequest | null): request is RpcExtensionUIRequest {
-	return !!request && request.method !== "cancel" && request.method !== "notify" && request.method !== "setStatus" && request.method !== "setWidget";
+	return (
+		!!request &&
+		request.method !== "cancel" &&
+		request.method !== "notify" &&
+		request.method !== "setStatus" &&
+		request.method !== "setWidget"
+	);
 }
 
 export function createExtensionResponse(

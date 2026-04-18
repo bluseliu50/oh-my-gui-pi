@@ -1,5 +1,5 @@
 import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import {
 	User,
 	Bot,
@@ -16,6 +16,7 @@ import {
 	Route,
 	Blocks,
 } from "lucide-react";
+import type { DesktopSlashCommand } from "../common";
 import { enMessages } from "../i18n/en";
 import { createTranslator } from "../i18n/messages";
 import { useDesktopSession } from "./state/useDesktopSession";
@@ -87,12 +88,44 @@ function roleLabel(role: string, t: ReturnType<typeof createTranslator>): string
 	}
 }
 
+function getSlashCommandQuery(value: string): string | null {
+	const trimmed = value.trim();
+	if (!trimmed.startsWith("/") || trimmed.includes("\n") || trimmed.includes(" ")) return null;
+	return trimmed.slice(1).toLowerCase();
+}
+
 export default function App() {
 	const t = useMemo(() => createTranslator(enMessages), []);
-	const { state, loading, error: sessionError, sendPrompt, respondToExtensionRequest } = useDesktopSession();
+	const {
+		state,
+		slashCommands,
+		loading,
+		error: sessionError,
+		sendPrompt,
+		respondToExtensionRequest,
+	} = useDesktopSession();
 	const [input, setInput] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const inputRef = useRef<HTMLTextAreaElement | null>(null);
+	const [selectedSlashCommandIndex, setSelectedSlashCommandIndex] = useState(0);
+	const slashCommandQuery = getSlashCommandQuery(input);
+	const matchingSlashCommands = useMemo(
+		() =>
+			slashCommandQuery === null ? [] : slashCommands.filter(command => command.name.startsWith(slashCommandQuery)),
+		[slashCommandQuery, slashCommands],
+	);
+	const activeSlashCommand = matchingSlashCommands[selectedSlashCommandIndex] ?? matchingSlashCommands[0] ?? null;
+
+	useEffect(() => {
+		setSelectedSlashCommandIndex(0);
+	}, [slashCommandQuery, matchingSlashCommands.length]);
+
+	const applySlashCommandSelection = (command: DesktopSlashCommand) => {
+		setInput(`/${command.name} `);
+		setSelectedSlashCommandIndex(0);
+		inputRef.current?.focus();
+	};
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -107,6 +140,31 @@ export default function App() {
 		} finally {
 			setSubmitting(false);
 		}
+	};
+
+	const handlePromptKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+		if (matchingSlashCommands.length > 0) {
+			if (event.key === "ArrowDown") {
+				event.preventDefault();
+				setSelectedSlashCommandIndex(current => (current + 1) % matchingSlashCommands.length);
+				return;
+			}
+			if (event.key === "ArrowUp") {
+				event.preventDefault();
+				setSelectedSlashCommandIndex(current => (current === 0 ? matchingSlashCommands.length - 1 : current - 1));
+				return;
+			}
+			if ((event.key === "Tab" || event.key === "Enter") && !event.shiftKey && !event.nativeEvent.isComposing) {
+				if (activeSlashCommand && input.trim() !== `/${activeSlashCommand.name}`) {
+					event.preventDefault();
+					applySlashCommandSelection(activeSlashCommand);
+					return;
+				}
+			}
+		}
+		if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+		event.preventDefault();
+		event.currentTarget.form?.requestSubmit();
 	};
 
 	const handleExtensionSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -189,17 +247,40 @@ export default function App() {
 							})}
 						</div>
 						<form className="shrink-0 border-t border-[var(--desktop-border)] px-5 py-4" onSubmit={handleSubmit}>
-							<label className="sr-only" htmlFor="desktop-prompt">
-								{t("promptPlaceholder")}
-							</label>
-							<textarea
-								id="desktop-prompt"
-								className="prompt-input"
-								placeholder={t("promptPlaceholder")}
-								rows={4}
-								value={input}
-								onChange={event => setInput(event.target.value)}
-							/>
+							<div className="prompt-shell">
+								<label className="sr-only" htmlFor="desktop-prompt">
+									{t("promptPlaceholder")}
+								</label>
+								{matchingSlashCommands.length > 0 && (
+									<div aria-label="Slash commands" className="slash-command-picker" role="listbox">
+										{matchingSlashCommands.map(command => (
+											<button
+												className={`slash-command-item ${activeSlashCommand?.name === command.name ? "slash-command-item--active" : ""}`}
+												key={`${command.kind}-${command.name}`}
+												onClick={() => applySlashCommandSelection(command)}
+												onMouseDown={event => event.preventDefault()}
+												type="button"
+											>
+												<span className="slash-command-item__header">
+													<span className="slash-command-item__name">/{command.name}</span>
+													<span className="slash-command-item__source">{command.source}</span>
+												</span>
+												<span className="slash-command-item__description">{command.description}</span>
+											</button>
+										))}
+									</div>
+								)}
+								<textarea
+									id="desktop-prompt"
+									className="prompt-input"
+									placeholder={t("promptPlaceholder")}
+									rows={4}
+									ref={inputRef}
+									value={input}
+									onChange={event => setInput(event.target.value)}
+									onKeyDown={handlePromptKeyDown}
+								/>
+							</div>
 							<div className="mt-3 flex items-center justify-between gap-4">
 								{displayedError ? (
 									<p className="text-sm text-[var(--desktop-error)]">{displayedError}</p>

@@ -32,6 +32,7 @@ import {
 } from "./discovery/helpers";
 import { exportFromFile } from "./export/html";
 import type { ExtensionUIContext } from "./extensibility/extensions/types";
+import { loadSlashCommands } from "./extensibility/slash-commands";
 import {
 	getInstalledPluginsRegistryPath,
 	getMarketplacesCacheDir,
@@ -96,6 +97,10 @@ function applyRpcDefaultSettingOverrides(): void {
 	for (const settingPath of RPC_DEFAULTED_SETTING_PATHS) {
 		settings.override(settingPath, getDefault(settingPath));
 	}
+}
+
+async function loadSessionSlashCommands(session: AgentSession): Promise<void> {
+	session.setSlashCommands(await loadSlashCommands({ cwd: session.sessionManager.getCwd() }));
 }
 
 async function readPipedInput(): Promise<string | undefined> {
@@ -851,6 +856,7 @@ export async function runRootCommand(parsed: Args, rawArgs: string[]): Promise<v
 	};
 
 	if (mode === "rpc") {
+		await loadSessionSlashCommands(session);
 		await runRpcMode(session);
 	} else if (mode === "acp") {
 		await runAcpMode(session, createAcpSession);

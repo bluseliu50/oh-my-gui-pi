@@ -126,6 +126,66 @@
 		box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.35);
 	}
 
+	.prompt-shell {
+		position: relative;
+	}
+
+	.slash-command-picker {
+		position: absolute;
+		right: 0;
+		bottom: calc(100% + 0.75rem);
+		left: 0;
+		z-index: 20;
+		display: flex;
+		max-height: 16rem;
+		flex-direction: column;
+		overflow-y: auto;
+		border: 1px solid var(--desktop-border);
+		border-radius: 0;
+		background: var(--desktop-surface);
+		box-shadow: 0 12px 36px rgba(15, 23, 42, 0.12);
+	}
+
+	.slash-command-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		border: 0;
+		border-bottom: 1px solid var(--desktop-border);
+		background: transparent;
+		padding: 0.85rem 1rem;
+		text-align: left;
+		color: var(--desktop-fg);
+		cursor: pointer;
+	}
+
+	.slash-command-item:last-child {
+		border-bottom: 0;
+	}
+
+	.slash-command-item--active,
+	.slash-command-item:hover {
+		background: #eff6ff;
+	}
+
+	.slash-command-item__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.slash-command-item__name {
+		font-weight: 600;
+	}
+
+	.slash-command-item__source,
+	.slash-command-item__description {
+		font-size: 0.82rem;
+		color: var(--desktop-muted);
+	}
+
+
 	.send-button {
 		border: 1px solid var(--desktop-accent-strong);
 		border-radius: 0;

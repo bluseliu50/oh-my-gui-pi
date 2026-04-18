@@ -8,6 +8,7 @@ import {
 	type DesktopBootstrap,
 	type DesktopCommand,
 	type DesktopCommandResponse,
+	type DesktopSlashCommand,
 } from "./common";
 import { enMessages } from "./i18n/en";
 
@@ -26,9 +27,10 @@ backend.onFrame(frame => {
 });
 
 async function buildBootstrap(): Promise<DesktopBootstrap> {
-	const [stateResponse, messagesResponse] = await Promise.all([
+	const [stateResponse, messagesResponse, slashCommandsResponse] = await Promise.all([
 		backend.request({ type: "get_state" }),
 		backend.request({ type: "get_messages" }),
+		backend.request({ type: "get_slash_commands" }),
 	]);
 
 	if (!stateResponse.success || stateResponse.command !== "get_state") {
@@ -37,11 +39,17 @@ async function buildBootstrap(): Promise<DesktopBootstrap> {
 	if (!messagesResponse.success || messagesResponse.command !== "get_messages") {
 		throw new Error(messagesResponse.success ? "Unexpected messages response." : messagesResponse.error);
 	}
+	if (!slashCommandsResponse.success || slashCommandsResponse.command !== "get_slash_commands") {
+		throw new Error(
+			slashCommandsResponse.success ? "Unexpected slash commands response." : slashCommandsResponse.error,
+		);
+	}
 
 	return {
 		backendStatus: backend.status,
 		state: stateResponse.data,
 		messages: messagesResponse.data.messages,
+		slashCommands: slashCommandsResponse.data.commands as DesktopSlashCommand[],
 	};
 }
 
