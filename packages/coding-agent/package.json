@@ -1,9 +1,9 @@
 {
 	"type": "module",
-	"name": "@oh-my-pi/pi-coding-agent",
-	"version": "14.1.4",
-	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
-	"homepage": "https://github.com/can1357/oh-my-pi",
+	"name": "oh-my-gui-pi",
+	"version": "0.1.0",
+	"description": "oh-my-gui-pi agent-first desktop kernel and app runtime",
+	"homepage": "https://github.com/can1357/oh-my-gui-pi",
 	"author": "Can Boluk",
 	"contributors": [
 		"Mario Zechner"
@@ -32,6 +32,8 @@
 	},
 	"scripts": {
 		"build": "bun --cwd=../stats scripts/generate-client-bundle.ts --generate && bun --cwd=../natives run embed:native && bun build --compile --define PI_COMPILED=true --external mupdf --root ../.. ./src/cli.ts --outfile dist/omp && bun --cwd=../natives run embed:native --reset && bun --cwd=../stats scripts/generate-client-bundle.ts --reset",
+		"desktop:build": "bun run src/desktop/build.ts",
+		"desktop:dev": "bun run desktop:build && electron ./dist/desktop/main.cjs",
 		"check": "biome check . && bun run check:types",
 		"check:types": "tsgo -p tsconfig.json --noEmit",
 		"lint": "biome lint .",
@@ -53,22 +55,30 @@
 		"@oh-my-pi/pi-tui": "catalog:",
 		"@oh-my-pi/pi-utils": "catalog:",
 		"@sinclair/typebox": "catalog:",
+		"@tailwindcss/node": "catalog:",
 		"@xterm/headless": "catalog:",
 		"ajv": "catalog:",
 		"chalk": "catalog:",
 		"diff": "catalog:",
+		"electron": "catalog:",
 		"fflate": "catalog:",
 		"handlebars": "catalog:",
 		"linkedom": "catalog:",
 		"lru-cache": "catalog:",
+		"lucide-react": "catalog:",
 		"markit-ai": "catalog:",
 		"puppeteer": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"tailwindcss": "catalog:",
 		"turndown": "catalog:",
 		"turndown-plugin-gfm": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
 		"@types/turndown": "catalog:"
 	},
 	"engines": {
